@@ -1,0 +1,35 @@
+stages:
+  - test
+  - build
+
+variables:
+  MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode --errors --fail-at-end"
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+
+# Cache Maven dependencies to speed up builds
+cache:
+  paths:
+    - .m2/repository
+
+before_script:
+  - echo "Using Maven version:"
+  - mvn --version
+
+test:
+  stage: test
+  script:
+    - mvn $MAVEN_CLI_OPTS clean test
+  artifacts:
+    when: always
+    paths:
+      - target/surefire-reports/*.xml
+    reports:
+      junit: target/surefire-reports/*.xml
+
+build:
+  stage: build
+  script:
+    - mvn $MAVEN_CLI_OPTS clean package
+  artifacts:
+    paths:
+      - target/*.jar
