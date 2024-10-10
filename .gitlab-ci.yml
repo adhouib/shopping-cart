@@ -1,0 +1,23 @@
+image: maven:3.8.8-eclipse-temurin-17-alpine
+
+stages:
+  - build
+  - test
+
+# Cache Maven dependencies to speed up builds
+cache:
+  paths:
+    - .m2/repository
+
+test:
+  stage: test
+  script:
+    - echo "Running tests Cart Shopping project"
+    - mvn test
+
+build:
+  stage: build
+  script:
+    - echo "Building Cart Shopping project"
+    - mvn clean install -DskipTests
+
